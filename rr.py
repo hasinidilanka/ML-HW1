@@ -6,15 +6,17 @@ import statistics
 import math
 
 
-K_list = [3]
+K = 3
 N_list = [5,10,15,20,25,30]
-lamda = [0.01, 0.1, 1, 10]
+lamda_list = [0.001, 0.01, 0.1, 1,2,10]
 normal_loss = [0]*len(N_list)
-ridge_loss = [[0]*len(N_list)]*len(lamda)
+# ridge_loss = [[0]*len(N_list)]*len(lamda_list)
+ridge_loss = [[0 for i in range(len(N_list))] for j in range(len(lamda_list))]
 
 
 
-for K in K_list:
+i=0
+for lamda in lamda_list:
 
     # Plot between -10 and 10 with .001 steps.
     x_axis = np.arange(-20, 20, 0.01)
@@ -27,7 +29,7 @@ for K in K_list:
     params = random.normal(loc=mean, scale=std, size=(1, K))
     print(params)
 
-    i=0
+    j=0
     for N in N_list:
         print(K,N)
 
@@ -59,41 +61,39 @@ for K in K_list:
 
         # print(y)
 
-        # Calculate theta using OLS
-        theta_best_values = np.linalg.inv(x.T.dot(x)).dot(x.T).dot(y)
-        normal_results = theta_best_values.reshape(-1)
-        print(normal_results)
+      
 
 
         # Calculate Ridge Regression
         I = np.identity(K)
         # print(I)
         # A = x.T.dot(x)+(lamda**2).dot(I)
-        # for i in range(len(lamda)):
-        #     theta_best_values = np.linalg.inv(x.T.dot(x)+(lamda[i]**2)*(I)).dot(x.T).dot(y)
-        #     ridge_results = theta_best_values.reshape(-1)
-        #     print(ridge_results)
+        theta_best_values = np.linalg.inv(x.T.dot(x)+(lamda**2)*(I)).dot(x.T).dot(y)
+        ridge_results = theta_best_values.reshape(-1)
+        print(ridge_results)
 
         # Calculate L2 distance (Loss Function)
-        l1 = 0
         l2 = 0
         for k in range(K):
-            l1 += (normal_results[k]-params[0][k])**2
             l2 += (ridge_results[k]-params[0][k])**2
-        loss1 = math.sqrt(l1)
         loss2 = math.sqrt(l2)
 
-        print("Ordinary Regression Loss : ", loss1)
         print("Ridge Regression Loss : ", loss2)
-        normal_loss[i] = loss1
-        ridge_loss[i] = loss2
-        i+=1
+        ridge_loss[i][j] = loss2
+        print(i,j)
+        print(ridge_loss)
+        j+=1
+    i+=1
 
-print(normal_loss)
 print(ridge_loss)
-# plt.plot(N_list,normal_loss)
-# plt.xlabel("Smaple Size (N)")
-# plt.ylabel("L2 Distance")
-# plt.title("Ordinary Regression: L2 Norm vs N (K=3)")
-# plt.savefig("K3OR.pdf", bbox_inches='tight')
-# plt.show()
+i=0
+for loss in ridge_loss:
+    print(loss)
+    plt.plot(N_list,loss,label='lambda='+str(lamda_list[i]))
+    i+=1
+plt.xlabel("Smaple Size (N)")
+plt.ylabel("L2 Distance")
+plt.title("Ridge Regression: L2 Norm vs N (K=3)")
+plt.savefig("K3RR.pdf", bbox_inches='tight')
+plt.legend()
+plt.show()
