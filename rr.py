@@ -7,8 +7,15 @@ import math
 
 
 K = 3
-N_list = [5,10,15,20,25,30]
-lamda_list = [0.001, 0.01, 0.1, 1,2,10]
+# N_list = [5,10,15,20,25,30]
+N_list = [2,5,10,15,20,25,30]
+# N_list = [5,10,20,30,40,50,60,70,80,90,100]
+# N_list = [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,200]
+
+
+lamda_list = [1, 5, 10]
+# lamda_list = [0.0001,0.0005]
+
 normal_loss = [0]*len(N_list)
 # ridge_loss = [[0]*len(N_list)]*len(lamda_list)
 ridge_loss = [[0 for i in range(len(N_list))] for j in range(len(lamda_list))]
@@ -76,7 +83,7 @@ for lamda in lamda_list:
         l2 = 0
         for k in range(K):
             l2 += (ridge_results[k]-params[0][k])**2
-        loss2 = math.sqrt(l2)
+        loss2 = l2
 
         print("Ridge Regression Loss : ", loss2)
         ridge_loss[i][j] = loss2
@@ -93,7 +100,7 @@ for loss in ridge_loss:
     i+=1
 plt.xlabel("Smaple Size (N)")
 plt.ylabel("L2 Distance")
-plt.title("Ridge Regression: L2 Norm vs N (K=3)")
-plt.savefig("K3RR.pdf", bbox_inches='tight')
+plt.title("Ridge Regression: L2 Norm vs N (K="+str(K)+")")
 plt.legend()
+plt.savefig("K"+str(K)+"RR.pdf", bbox_inches='tight')
 plt.show()
